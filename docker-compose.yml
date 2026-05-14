@@ -1,0 +1,32 @@
+
+services:
+  namecounter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: name-counter:local
+    init: true
+    volumes:
+      - ${DATA_DIR:-./testdata}:/data:ro
+    command:
+      - "-file"
+      - "${INPUT_FILE:-/data/sample.txt}"
+      - "-sort"
+      - "${SORT_MODE:-freq}"
+
+  namecounter-pprof:
+    profiles: ["pprof"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: name-counter:local
+    init: true
+    volumes:
+      - ${DATA_DIR:-./testdata}:/data:ro
+    ports:
+      - "${PPROF_PORT:-6060}:6060"
+    command:
+      - "-file"
+      - "${INPUT_FILE:-/data/sample.txt}"
+      - "-pprof"
+      - ":6060"
